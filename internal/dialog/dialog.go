@@ -20,11 +20,17 @@ var (
 func DeleteImage(ctx context.Context, imgs []images.Image) (*DeletionResult, error) {
 	txHeight = tx.CalculateHeight(txDiff)
 
-	img, tags, err := selectImageTag(imgs)
+	sel, err := selectImageTag(imgs)
 	if err != nil {
 		return nil, err
 	}
+	if sel.isQuit {
+		return &DeletionResult{
+			Canceled: true,
+		}, nil
+	}
 
+	img, tags := sel.img, sel.tags
 	if confirm, err := confirmDeletion(img, tags); err != nil {
 		return nil, fmt.Errorf("error confirming deletion: %v", err)
 	} else if !confirm {
@@ -63,28 +69,40 @@ func DeleteImage(ctx context.Context, imgs []images.Image) (*DeletionResult, err
 	}, nil
 }
 
-func selectImageTag(imgs []images.Image) (*images.Image, []images.Tag, error) {
+func selectImageTag(imgs []images.Image) (*imageSelection, error) {
 	for {
-		img, err := selectImage(imgs)
+		sel, err := selectImage(imgs)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error selecting the image: %v", err)
+			return nil, fmt.Errorf("error selecting the image: %v", err)
+		}
+		if sel.isQuit {
+			return &imageSelection{isQuit: true}, nil
 		}
 
 		var tags []images.Tag
-		if len(img.Tags) > 0 {
-			seltags, err := selectTags(img)
+		if len(sel.img.Tags) > 0 {
+			seltags, err := selectTags(sel.img)
 			if seltags.isBack {
 				continue
 			}
 			tags = seltags.tags
 
 			if err != nil {
-				return nil, nil, fmt.Errorf("error selecting the tag: %v", err)
+				return nil, fmt.Errorf("error selecting the tag: %v", err)
 			}
 		}
 
-		return img, tags, err
+		return &imageSelection{
+			img:  sel.img,
+			tags: tags,
+		}, err
 	}
+}
+
+type imageSelection struct {
+	img    *images.Image
+	tags   []images.Tag
+	isQuit bool
 }
 
 //DeletionResult ...

@@ -21,10 +21,19 @@ func getIDs(img *images.Image, tags []images.Tag) []string {
 	return ids
 }
 
-func selectImage(imgs []images.Image) (img *images.Image, err error) {
+type imgSelection struct {
+	img    *images.Image
+	isQuit bool
+}
+
+func selectImage(imgs []images.Image) (sel *imgSelection, err error) {
 	promptImg := prompts.ImageSelector(imgs, txHeight)
 	if i, _, err := promptImg.Run(); err == nil {
-		img = &imgs[i]
+		if i == len(imgs) {
+			sel = &imgSelection{isQuit: true}
+		} else {
+			sel = &imgSelection{img: &imgs[i]}
+		}
 	}
 	return
 }

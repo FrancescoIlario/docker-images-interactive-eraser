@@ -25,6 +25,12 @@ func main() {
 			log.Printf("can not retrieve the list of Docker images: %v", err)
 		}
 
-		dialog.DeleteImage(ctx, imgs)
+		dl, err := dialog.DeleteImage(ctx, imgs)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		if dl.Canceled {
+			return
+		}
 	}
 }
