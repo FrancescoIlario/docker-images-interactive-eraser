@@ -24,8 +24,8 @@ RUN mkdir -p /app/build \
 		-ldflags="-w -s" \
 		-a \
 		-installsuffix cgo \
-		-o /app/build/go_std_app \
-		cmd/go-std-tmpl/main.go
+		-o /app/build/diie \
+		cmd/diie/main.go
 
 ############################
 # STEP 2 build a small image
@@ -35,7 +35,7 @@ RUN mkdir -p /app/build \
 FROM gcr.io/distroless/static
 
 # Copy our static executable
-COPY --from=builder /app/build/go_std_app /usr/bin/go_std_app
+COPY --from=builder /app/build/diie /usr/bin/diie
 
 # Run the produced binary.
-ENTRYPOINT ["/usr/bin/go_std_app"]
+ENTRYPOINT ["/usr/bin/diie"]
