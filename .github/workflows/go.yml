@@ -31,4 +31,4 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v cmd/go-std-tmpl/main.go
+      run: go build -v cmd/diie/main.go
