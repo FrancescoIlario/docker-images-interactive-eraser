@@ -1,8 +1,0 @@
-replicaCount: 1
-
-name: wss-bot
-image:
-  repository: FrancescoIlario/docker-images-interactive-eraser
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart version.
-  tag: latest
