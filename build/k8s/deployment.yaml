@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-std-tmpl
+spec:
+  selector:
+    matchLabels:
+      app: go-std-tmpl
+  template:
+    metadata:
+      labels:
+        app: go-std-tmpl
+    spec:
+      containers:
+      - name: go-std-tmpl
+        image: filario/go-std-tmpl:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"

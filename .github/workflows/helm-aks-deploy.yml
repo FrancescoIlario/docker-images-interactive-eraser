@@ -1,0 +1,74 @@
+name: Helm Deploy
+
+on:
+  push:
+    branches-ignore:
+      - '*'
+#   push:
+#     branches: [ master ]
+
+# Environment variables available to all jobs and steps in this workflow
+env:
+  REGISTRY_NAME: filario
+  CLUSTER_NAME: cluster-name
+  CLUSTER_RESOURCE_GROUP: {{ cookiecutter.aks.rg }}
+  NAMESPACE: namespace
+
+jobs:
+  
+  build: 
+    runs-on: ubuntu-latest
+   
+    steps:
+      - uses: actions/checkout@master
+
+      # Connect to Azure Container registry (ACR)
+      - uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - uses: benjlevesque/short-sha@v.1.1
+        id: short-sha
+        with:
+          length: 7
+      - run: echo $SHA
+        env: 
+          SHA: ${{ steps.short-sha.outputs.sha }}
+
+      # Container build and push to a Azure Container registry (ACR)
+      - run: |
+          docker build -t ${{ env.REGISTRY_NAME }}/go-std-tmpl:${{ env.SHA }} -f build/docker/app/Dockerfile .
+          docker push ${{ env.REGISTRY_NAME }}/go-std-tmpl:${{ env.SHA }}
+
+      # Set the target Azure Kubernetes Service (AKS) cluster.
+      - uses: azure/aks-set-context@v1
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+          cluster-name: ${{ env.CLUSTER_NAME }}
+          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+
+      # Create namespace if doesn't exist
+      - run: |
+          kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o json | kubectl apply -f -
+
+      # Baking the helm chart to generate the manifests to deploy
+      - uses: azure/k8s-bake@v1
+        with:
+          renderEngine: "helm2"
+          helmChart: "./build/helm/go-std-tmpl/"
+          helm-version: "latest"
+        id: bake
+      
+      - run: |
+          CHART_VERSION=$(helm show chart ./build/helm/go-std-tmpl/ | grep "version: " | sed -E 's/^version: (.*?)$/\1/')
+          CHART_NAME=$(helm show chart ./build/helm/go-std-tmpl/ | grep "name: " | sed -E 's/^name: (.*?)$/\1/')
+          
+          helm package ./build/helm/go-std-tmpl/
+          helm upgrade --install --namespace ${{ env.NAMESPACE }} go-std-tmpl $CHART_NAME-$CHART_VERSION.tgz --set image.tag=${{ env.SHA }}
+
+      # Deploy app to AKS
+      # - uses: azure/k8s-deploy@v1
+      #   with:
+      #     manifests: ${{ steps.bake.outputs.manifestsBundle }}
+      #     namespace: ${{ env.NAMESPACE }}
