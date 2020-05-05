@@ -1,8 +1,8 @@
 # Template Go Standard
 
-![Go](https://github.com/FrancescoIlario/go-std-tmpl/workflows/Go/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/FrancescoIlario/go-std-tmpl)](https://goreportcard.com/report/github.com/FrancescoIlario/go-std-tmpl)
-![Docker Image CI](https://github.com/FrancescoIlario/go-std-tmpl/workflows/Docker%20Image%20CI/badge.svg)
+![Go](https://github.com/FrancescoIlario/docker-images-interactive-eraser/workflows/Go/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/FrancescoIlario/docker-images-interactive-eraser)](https://goreportcard.com/report/github.com/FrancescoIlario/docker-images-interactive-eraser)
+![Docker Image CI](https://github.com/FrancescoIlario/docker-images-interactive-eraser/workflows/Docker%20Image%20CI/badge.svg)
 
 Template project based on the [Standard Go Project Layout](https://github.com/golang-standards/project-layout).
 
@@ -16,11 +16,11 @@ It's enriched with the following supports:
 
 # Setup
 
-Substitute in every file `FrancescoIlario/go-std-tmpl` with your Github path.
+Substitute in every file `FrancescoIlario/docker-images-interactive-eraser` with your Github path.
 You can use the following line of bash code substituting the fields `<YOUR_GH_ACCOUNT>` and `<YOUR_GH_REPO>`:
 
 ```bash
-grep -iRl FrancescoIlario/go-std-tmpl . \
+grep -iRl FrancescoIlario/docker-images-interactive-eraser . \
     | xargs sed -i 's/FrancescoIlario\/go-std-tmpl/<YOUR_GH_ACCOUNT>\/<YOUR_GH_REPO>/g' 
 ```
 

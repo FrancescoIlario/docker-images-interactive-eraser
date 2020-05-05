@@ -6,7 +6,7 @@ FROM golang:1.14.1-buster as builder
 # Ensure ca-certficates are up to date
 RUN update-ca-certificates
 
-WORKDIR $GOPATH/src/github.com/FrancescoIlario/go-std-tmpl
+WORKDIR $GOPATH/src/github.com/FrancescoIlario/docker-images-interactive-eraser
 
 # use modules
 COPY go.mod .

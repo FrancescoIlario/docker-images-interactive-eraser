@@ -3,7 +3,7 @@ package greeter
 import (
 	"fmt"
 
-	"github.com/FrancescoIlario/go-std-tmpl/pkg/envext"
+	"github.com/FrancescoIlario/docker-images-interactive-eraser/pkg/envext"
 )
 
 //Greeter ...

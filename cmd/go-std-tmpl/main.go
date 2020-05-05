@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/FrancescoIlario/go-std-tmpl/internal/greeter"
+	"github.com/FrancescoIlario/docker-images-interactive-eraser/internal/greeter"
 )
 
 func main() {
