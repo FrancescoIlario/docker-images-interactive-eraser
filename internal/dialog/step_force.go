@@ -6,13 +6,18 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func askForce(deletionErr error) (force bool, err error) {
+func askForce(deletionErr error) (bool, error) {
 	errConf := promptui.Prompt{
 		Label:     fmt.Sprintf("Can not delete (%v), do you want to force", deletionErr),
 		IsConfirm: true,
 	}
-	if resForce, err := errConf.Run(); err == nil {
-		force = resForce == "y"
+
+	resForce, err := errConf.Run()
+	if err != nil {
+		if err == promptui.ErrAbort {
+			return false, nil
+		}
+		return false, err
 	}
-	return
+	return resForce == "y", nil
 }

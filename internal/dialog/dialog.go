@@ -38,12 +38,6 @@ func DeleteImage(ctx context.Context, imgs []images.Image, useTags bool) (*Delet
 	}
 
 	img, tags := sel.img, sel.tags
-	if confirm, err := confirmDeletion(img, tags); err != nil {
-		return nil, fmt.Errorf("error confirming deletion: %v", err)
-	} else if !confirm {
-		return &DeletionResult{Canceled: true}, nil
-	}
-
 	prune := false
 	if !useTags || len(img.Tags) == 1 || len(img.Tags) == len(tags) {
 		if prune, err = askPrune(img, tags); err != nil {
@@ -88,13 +82,8 @@ func selectImageTag(imgs []images.Image, useTags bool) (*imageTagsSelection, err
 
 		var tags []images.Tag
 		if !useTags {
-			return &imageTagsSelection{
-				img:  sel.img,
-				tags: sel.img.Tags,
-			}, nil
-		}
-
-		if len(sel.img.Tags) > 0 {
+			tags = sel.img.Tags
+		} else if len(sel.img.Tags) > 0 {
 			seltags, err := selectTags(sel.img)
 			if err != nil {
 				return nil, fmt.Errorf("error selecting the tag: %v", err)
@@ -104,6 +93,13 @@ func selectImageTag(imgs []images.Image, useTags bool) (*imageTagsSelection, err
 				continue
 			}
 			tags = seltags.tags
+		}
+
+		confirm, err := confirmDeletion(sel.img, tags)
+		if err != nil {
+			return nil, fmt.Errorf("error confirming deletion: %v", err)
+		} else if !confirm {
+			continue
 		}
 
 		return &imageTagsSelection{

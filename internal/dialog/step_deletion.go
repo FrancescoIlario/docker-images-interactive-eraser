@@ -7,7 +7,7 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func confirmDeletion(img *images.Image, tags []images.Tag) (confirm bool, err error) {
+func confirmDeletion(img *images.Image, tags []images.Tag) (bool, error) {
 	var label string
 	if tags == nil || len(tags) == 0 {
 		label = fmt.Sprintf("Do you really want to delete image %v", img.ID)
@@ -22,8 +22,12 @@ func confirmDeletion(img *images.Image, tags []images.Tag) (confirm bool, err er
 		IsConfirm: true,
 	}
 	result, err := prompt.Run()
-	if err == nil {
-		confirm = result == "y"
+	if err != nil {
+		if err == promptui.ErrAbort {
+			return false, nil
+		}
+		return false, err
 	}
-	return
+
+	return result == "y", nil
 }

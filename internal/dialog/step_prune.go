@@ -5,14 +5,17 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func askPrune(img *images.Image, tags []images.Tag) (prune bool, err error) {
+func askPrune(img *images.Image, tags []images.Tag) (bool, error) {
 	pruneConfirm := promptui.Prompt{
 		Label:     "Do you want to prune the children of the image",
 		IsConfirm: true,
 	}
 	pruneResult, err := pruneConfirm.Run()
-	if err == nil {
-		prune = pruneResult == "y"
+	if err != nil {
+		if err == promptui.ErrAbort {
+			return false, nil
+		}
+		return false, err
 	}
-	return
+	return pruneResult == "y", nil
 }
