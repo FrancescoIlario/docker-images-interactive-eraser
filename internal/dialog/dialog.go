@@ -24,10 +24,10 @@ type DeletionResult struct {
 }
 
 // DeleteImage ...
-func DeleteImage(ctx context.Context, imgs []images.Image) (*DeletionResult, error) {
+func DeleteImage(ctx context.Context, imgs []images.Image, useTags bool) (*DeletionResult, error) {
 	txHeight = tx.CalculateHeight(txDiff)
 
-	sel, err := selectImageTag(imgs)
+	sel, err := selectImageTag(imgs, useTags)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func DeleteImage(ctx context.Context, imgs []images.Image) (*DeletionResult, err
 	}
 
 	prune := false
-	if lt := len(img.Tags); lt == 1 || lt == len(tags) {
+	if !useTags || len(img.Tags) == 1 || len(img.Tags) == len(tags) {
 		if prune, err = askPrune(img, tags); err != nil {
 			return nil, fmt.Errorf("error asking for prune choice: %v", err)
 		}
@@ -76,7 +76,7 @@ func DeleteImage(ctx context.Context, imgs []images.Image) (*DeletionResult, err
 	}, nil
 }
 
-func selectImageTag(imgs []images.Image) (*imageTagsSelection, error) {
+func selectImageTag(imgs []images.Image, useTags bool) (*imageTagsSelection, error) {
 	for {
 		sel, err := selectImage(imgs)
 		if err != nil {
@@ -87,6 +87,13 @@ func selectImageTag(imgs []images.Image) (*imageTagsSelection, error) {
 		}
 
 		var tags []images.Tag
+		if !useTags {
+			return &imageTagsSelection{
+				img:  sel.img,
+				tags: sel.img.Tags,
+			}, nil
+		}
+
 		if len(sel.img.Tags) > 0 {
 			seltags, err := selectTags(sel.img)
 			if seltags.isBack {

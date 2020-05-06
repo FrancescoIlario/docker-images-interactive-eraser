@@ -13,6 +13,7 @@ require (
 	github.com/manifoldco/promptui v0.7.0
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/spf13/cobra v1.0.0
 	github.com/wayneashleyberry/terminal-dimensions v1.0.0
 	golang.org/x/net v0.0.0-20200505041828-1ed23360d12c // indirect
 )
