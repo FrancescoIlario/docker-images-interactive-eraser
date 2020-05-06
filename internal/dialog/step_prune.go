@@ -7,7 +7,7 @@ import (
 
 func askPrune(img *images.Image, tags []images.Tag) (prune bool, err error) {
 	pruneConfirm := promptui.Prompt{
-		Label:     "Do you want to prune the children of the image?",
+		Label:     "Do you want to prune the children of the image",
 		IsConfirm: true,
 	}
 	pruneResult, err := pruneConfirm.Run()

@@ -8,7 +8,7 @@ import (
 
 func askForce(deletionErr error) (force bool, err error) {
 	errConf := promptui.Prompt{
-		Label:     fmt.Sprintf("Can not delete (%v), do you want to force?", deletionErr),
+		Label:     fmt.Sprintf("Can not delete (%v), do you want to force", deletionErr),
 		IsConfirm: true,
 	}
 	if resForce, err := errConf.Run(); err == nil {
