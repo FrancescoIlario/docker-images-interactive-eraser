@@ -16,6 +16,13 @@ var (
 	txHeight = 5
 )
 
+//DeletionResult ...
+type DeletionResult struct {
+	Canceled     bool
+	ImageRemoved *images.Image
+	TagsRemoved  []images.Tag
+}
+
 // DeleteImage ...
 func DeleteImage(ctx context.Context, imgs []images.Image) (*DeletionResult, error) {
 	txHeight = tx.CalculateHeight(txDiff)
@@ -69,14 +76,14 @@ func DeleteImage(ctx context.Context, imgs []images.Image) (*DeletionResult, err
 	}, nil
 }
 
-func selectImageTag(imgs []images.Image) (*imageSelection, error) {
+func selectImageTag(imgs []images.Image) (*imageTagsSelection, error) {
 	for {
 		sel, err := selectImage(imgs)
 		if err != nil {
 			return nil, fmt.Errorf("error selecting the image: %v", err)
 		}
 		if sel.isQuit {
-			return &imageSelection{isQuit: true}, nil
+			return &imageTagsSelection{isQuit: true}, nil
 		}
 
 		var tags []images.Tag
@@ -92,22 +99,15 @@ func selectImageTag(imgs []images.Image) (*imageSelection, error) {
 			}
 		}
 
-		return &imageSelection{
+		return &imageTagsSelection{
 			img:  sel.img,
 			tags: tags,
 		}, err
 	}
 }
 
-type imageSelection struct {
+type imageTagsSelection struct {
 	img    *images.Image
 	tags   []images.Tag
 	isQuit bool
-}
-
-//DeletionResult ...
-type DeletionResult struct {
-	Canceled     bool
-	ImageRemoved *images.Image
-	TagsRemoved  []images.Tag
 }
