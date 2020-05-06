@@ -96,14 +96,14 @@ func selectImageTag(imgs []images.Image, useTags bool) (*imageTagsSelection, err
 
 		if len(sel.img.Tags) > 0 {
 			seltags, err := selectTags(sel.img)
+			if err != nil {
+				return nil, fmt.Errorf("error selecting the tag: %v", err)
+			}
+
 			if seltags.isBack {
 				continue
 			}
 			tags = seltags.tags
-
-			if err != nil {
-				return nil, fmt.Errorf("error selecting the tag: %v", err)
-			}
 		}
 
 		return &imageTagsSelection{
