@@ -7,11 +7,6 @@ import (
 
 // ImageSelector creates an image selector prompt
 func ImageSelector(imgs []images.Image, txHeight int) *promptui.Select {
-	data := append(imgs, images.Image{
-		ID:   "Quit",
-		Size: "<-- Exit from the application",
-	})
-
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}",
 		Active:   "\U00002326   {{ .ID | cyan }} {{ .Size | white }} {{ .Tags | white }}",
@@ -27,7 +22,7 @@ func ImageSelector(imgs []images.Image, txHeight int) *promptui.Select {
 
 	return &promptui.Select{
 		Label:     "Choose one image",
-		Items:     data,
+		Items:     imgs,
 		Templates: templates,
 		Size:      txHeight,
 	}

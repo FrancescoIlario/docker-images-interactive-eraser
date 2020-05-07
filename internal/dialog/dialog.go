@@ -56,10 +56,8 @@ func DeleteImage(ctx context.Context, imgs []images.Image, useTags bool) (*Delet
 			return nil, fmt.Errorf("error asking for force choice: %v", err)
 		}
 
-		for _, id := range ids {
-			if err := images.Delete(ctx, id, force, prune); err != nil {
-				return nil, fmt.Errorf("error on force deletion: %v", err)
-			}
+		if err := images.Delete(ctx, id, force, prune); err != nil {
+			return nil, fmt.Errorf("error on force deletion: %v", err)
 		}
 	}
 
@@ -71,14 +69,21 @@ func DeleteImage(ctx context.Context, imgs []images.Image, useTags bool) (*Delet
 }
 
 func selectImageTag(imgs []images.Image, useTags bool) (*imageTagsSelection, error) {
+	cursor, scroll := 0, 0
 	for {
-		sel, err := selectImage(imgs)
+		if li := len(imgs); cursor >= li || scroll >= li {
+			li--
+			cursor, scroll = li, li
+		}
+
+		sel, err := SelectImage(imgs, cursor, scroll)
 		if err != nil {
 			return nil, fmt.Errorf("error selecting the image: %v", err)
 		}
 		if sel.isQuit {
 			return &imageTagsSelection{isQuit: true}, nil
 		}
+		cursor, scroll = sel.cursor, sel.scroll
 
 		var tags []images.Tag
 		if !useTags {
@@ -95,7 +100,7 @@ func selectImageTag(imgs []images.Image, useTags bool) (*imageTagsSelection, err
 			tags = seltags.tags
 		}
 
-		confirm, err := confirmDeletion(sel.img, tags)
+		confirm, err := ConfirmDeletion(sel.img, tags)
 		if err != nil {
 			return nil, fmt.Errorf("error confirming deletion: %v", err)
 		} else if !confirm {

@@ -6,23 +6,35 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-type imgSelection struct {
+//ImgSelection ...
+type ImgSelection struct {
 	img    *images.Image
 	isQuit bool
+	cursor int
+	scroll int
 }
 
-func selectImage(imgs []images.Image) (*imgSelection, error) {
+//SelectImage ...
+func SelectImage(imgs []images.Image, cursor, scroll int) (*ImgSelection, error) {
 	promptImg := prompts.ImageSelector(imgs, txHeight)
-	i, _, err := promptImg.Run()
+	i, _, err := promptImg.RunCursorAt(cursor, scroll)
 	if err != nil {
 		if err == promptui.ErrEOF {
-			return &imgSelection{isQuit: true}, nil
+			return &ImgSelection{
+				isQuit: true,
+				scroll: i,
+				cursor: i,
+			}, nil
 		}
 		return nil, err
 	}
 
 	if 0 <= i && i < len(imgs) {
-		return &imgSelection{img: &imgs[i]}, nil
+		return &ImgSelection{
+			img:    &imgs[i],
+			scroll: i,
+			cursor: i,
+		}, nil
 	}
-	return &imgSelection{isQuit: true}, nil
+	return &ImgSelection{isQuit: true}, nil
 }

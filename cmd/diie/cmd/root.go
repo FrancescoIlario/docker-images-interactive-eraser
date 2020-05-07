@@ -6,8 +6,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/FrancescoIlario/docker-images-interactive-eraser/internal/dialog"
+	"github.com/FrancescoIlario/docker-images-interactive-eraser/internal/dialog/v2"
 	"github.com/FrancescoIlario/docker-images-interactive-eraser/internal/images"
+	"github.com/FrancescoIlario/docker-images-interactive-eraser/internal/tx"
 	"github.com/spf13/cobra"
 )
 
@@ -36,6 +37,7 @@ func Execute() {
 
 func run(cmd *cobra.Command, args []string) {
 	ctx := context.Background()
+	display := dialog.DisplayStatus{}
 
 	for {
 		imgs, err := images.GetImages(ctx)
@@ -43,12 +45,11 @@ func run(cmd *cobra.Command, args []string) {
 			log.Printf("can not retrieve the list of Docker images: %v", err)
 		}
 
-		dl, err := dialog.DeleteImage(ctx, imgs, useTags)
-		if err != nil {
+		txHeight := tx.CalculateHeight(9)
+		dg := dialog.NewDeleteImageDialog(ctx, imgs, useTags, txHeight, &display)
+		if err := dg.DeleteImage(); err != nil {
 			log.Fatalln(err)
 		}
-		if dl.Canceled {
-			return
-		}
+		display = dg.GetImageDisplayStatus()
 	}
 }

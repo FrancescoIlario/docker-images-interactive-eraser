@@ -7,7 +7,8 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func confirmDeletion(img *images.Image, tags []images.Tag) (bool, error) {
+//ConfirmDeletion ...
+func ConfirmDeletion(img *images.Image, tags []images.Tag) (bool, error) {
 	var label string
 	if tags == nil || len(tags) == 0 {
 		label = fmt.Sprintf("Do you really want to delete image %v", img.ID)
