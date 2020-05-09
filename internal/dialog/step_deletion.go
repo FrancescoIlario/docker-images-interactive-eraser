@@ -10,7 +10,7 @@ import (
 //ConfirmDeletion ...
 func ConfirmDeletion(img *images.Image, tags []images.Tag) (bool, error) {
 	var label string
-	if tags == nil || len(tags) == 0 {
+	if len(tags) == 0 {
 		label = fmt.Sprintf("Do you really want to delete image %v", img.ID)
 	} else if len(tags) == 1 {
 		label = fmt.Sprintf("Do you really want to delete image %v (tag: %v)", img.ID, tags[0])

@@ -27,9 +27,3 @@ func ImageSelector(imgs []images.Image, txHeight int) *promptui.Select {
 		Size:      txHeight,
 	}
 }
-
-type imageTags struct {
-	tag  string
-	size string
-	id   string
-}
