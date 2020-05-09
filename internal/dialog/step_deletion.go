@@ -24,7 +24,7 @@ func ConfirmDeletion(img *images.Image, tags []images.Tag) (bool, error) {
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		if err == promptui.ErrAbort {
+		if err == promptui.ErrAbort || err == promptui.ErrEOF {
 			return false, nil
 		}
 		return false, err
