@@ -11,7 +11,7 @@ type opTag struct {
 }
 
 func createOpTags(img *images.Image) []opTag {
-	opTags := make([]opTag, len(img.Tags)+2)
+	opTags := make([]opTag, len(img.Tags)+1)
 	opTags[0] = opTag{
 		Tag:         "+ All",
 		Description: "Select all tags",
@@ -21,10 +21,6 @@ func createOpTags(img *images.Image) []opTag {
 			Tag:         tag,
 			Description: string(tag),
 		}
-	}
-	opTags[len(img.Tags)+1] = opTag{
-		Tag:         "<-- Back",
-		Description: "Back to the previous menu",
 	}
 	return opTags
 }
