@@ -40,15 +40,23 @@ func run(cmd *cobra.Command, args []string) {
 	display := dialog.DisplayStatus{}
 
 	for {
+		fmt.Println("Fetching the images from docker...")
 		imgs, err := images.GetImages(ctx)
 		if err != nil {
-			log.Printf("can not retrieve the list of Docker images: %v", err)
+			fmt.Printf("can not retrieve the list of Docker images: %v", err)
 		}
 
 		txHeight := tx.CalculateHeight(9)
 		dg := dialog.NewDeleteImageDialog(ctx, imgs, useTags, txHeight, &display)
 		if err := dg.DeleteImage(); err != nil {
-			log.Fatalln(err)
+			switch err {
+			case dialog.ErrNotConfirmed:
+				continue
+			case dialog.ErrImgSelCanceled:
+				return
+			default:
+				log.Fatalln(err)
+			}
 		}
 		display = dg.GetImageDisplayStatus()
 	}
