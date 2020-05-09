@@ -8,9 +8,9 @@ import (
 // ImageSelector creates an image selector prompt
 func ImageSelector(imgs []images.Image, txHeight int) *promptui.Select {
 	templates := &promptui.SelectTemplates{
-		Label:    "{{ . }}",
-		Active:   "\U00002326   {{ .ID | cyan }} {{ .Size | white }} {{ .Tags | white }}",
-		Inactive: "    {{ .ID | cyan }} {{ .Size | white }} {{ .Tags | white }}",
+		Label: "{{ . }}",
+		Active: "\U00002326   {{ .ID | cyan }} {{ .Size }}	{{ .Tags  }}",
+		Inactive: "    {{ .ID | cyan }} {{ .Size }}	{{ .Tags }}",
 		Selected: "\U00002326 {{ .ID | white | cyan }}",
 		Details: `
 --------- Image ----------
