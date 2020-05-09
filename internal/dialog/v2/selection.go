@@ -77,7 +77,7 @@ func (f *selectionForm) selectImageTags() (*SelectionResult, error) {
 	}
 
 	var tags []images.Tag
-	if f.useTags && len(img.Tags) > 0 {
+	if f.useTags && len(img.Tags) > 1 {
 		tags, err = f.selectTags(img)
 		if err != nil {
 			if err == promptui.ErrEOF {
