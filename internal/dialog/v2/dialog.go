@@ -57,7 +57,7 @@ func (d *deleteImageDialog) DeleteImage() error {
 		return ErrNotConfirmed
 	}
 
-	prune := false
+	prune := true
 	if it := len(sel.Image.Tags); it <= 1 || it == len(sel.Tags) {
 		if prune, err = d.askPrune(sel); err != nil {
 			return err
